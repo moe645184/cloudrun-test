@@ -16,6 +16,16 @@
     - 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii:$COMMIT_SHA'
     - '--region'
     - 'us-west2'
+    # Check if previous steps were successful and send Telegram notification if not
+  - name: 'centos'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      if [ "$?" != "0" ]; then
+        yum install -y curl
+        curl -X POST "https://api.telegram.org/bot6284042163:AAEVKgf1kIpSJ6zoHpa8Uc9rLebmccEKkNU/sendMessage" -d "chat_id=-649749422&text=Cloud Build Failed"
+      fi
   images:
   - 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii:$COMMIT_SHA'
   
