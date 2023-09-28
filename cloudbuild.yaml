@@ -1,5 +1,21 @@
-steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii', '.' ]
-images:
-- 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii'
+  steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii:$COMMIT_SHA', '.']
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii:$COMMIT_SHA']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+    - 'run'
+    - 'deploy'
+    - 'cloudrun-test'
+    - '--image'
+    - 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii:$COMMIT_SHA'
+    - '--region'
+    - 'us-west2'
+  images:
+  - 'us-west2-docker.pkg.dev/red-carver-396207/quickstart-docker-repo/quickstart-imageiii:$COMMIT_SHA'
+  
